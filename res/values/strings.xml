@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="app_name">MagicVersionNotes</string>
+	<string name="button_dimiss">Dismiss</string>
+	
+	<string name="version_prefix">Version</string>
+</resources>
