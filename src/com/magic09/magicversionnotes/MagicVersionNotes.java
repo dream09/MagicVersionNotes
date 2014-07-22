@@ -1,10 +1,18 @@
 package com.magic09.magicversionnotes;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Resources.NotFoundException;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,7 +104,6 @@ public class MagicVersionNotes {
 		}
 	}
 	
-	
 	/**
 	 * Method sets the app name to display.
 	 * @param name
@@ -114,11 +121,21 @@ public class MagicVersionNotes {
 	}
 	
 	/**
-	 *  Method sets the version notes to display.
-	 * @param message
+	 *  Method sets the version notes to display using the argument notes.
+	 * @param notes
 	 */
 	public void setNotes(String notes) {
 		versionNotes = notes;
+	}
+	
+	/**
+	 * Method sets the version notes using the passed text file resource
+	 * in the argument resId.  Requires context.
+	 * @param context
+	 * @param resId
+	 */
+	public void setNotesFromTextFile(Context context, int resId) {
+		versionNotes = readNotesFromRawTextFile(context, resId);
 	}
 	
 	/**
@@ -131,4 +148,40 @@ public class MagicVersionNotes {
 		SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		return (version.equals(myPrefs.getString(NOTES_VERSION_KEY, "NONE")));
 	}
+	
+	/**
+	 * Method reads the text file (raw) resource specified in the argument
+	 * resId and returns a String with its contents.
+	 * @param context
+	 * @param resId
+	 * @return
+	 */
+	private String readNotesFromRawTextFile(Context context, int resId) {
+		String result = null;
+		
+		try {
+			InputStream inputStream = context.getResources().openRawResource(resId);
+			InputStreamReader inputreader = new InputStreamReader(inputStream);
+		    BufferedReader buffreader = new BufferedReader(inputreader);
+		    String line;
+		    StringBuilder text = new StringBuilder();
+		    try {
+		        while (( line = buffreader.readLine()) != null) {
+		            text.append(line);
+		            text.append('\n');
+		        }
+		        result = text.toString();
+		    } catch (IOException e) {
+		        result = null;
+		    }
+		} catch (NotFoundException e) {
+			Log.e(TAG, "Cannot find text file resourse to display!");
+			e.printStackTrace();
+		}
+		
+		// Ensure we display any HTML encoded characters correctly
+		result = Html.fromHtml(result).toString();
+	    return result;
+	}
+	
 }
