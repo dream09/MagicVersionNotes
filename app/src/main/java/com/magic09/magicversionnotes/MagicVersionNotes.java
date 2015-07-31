@@ -1,22 +1,18 @@
 package com.magic09.magicversionnotes;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources.NotFoundException;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.Html;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.content.res.Resources.NotFoundException;
-import android.preference.PreferenceManager;
-import android.text.Html;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 /**
  * MagicEula provides a simple way of presenting what has been updated
@@ -60,47 +56,21 @@ public class MagicVersionNotes {
 		
 		if (appName == "" || appVersion == "" || versionNotes == "") {
 			Log.d(TAG, "App name, version or version notes not passed?");
-			return;
+			Log.e(TAG, "App name, version or version notes not set before calling showVersionNotes()?");
+			throw new IllegalArgumentException("App name, version or version notes not set before calling showVersionNotes()?");
 		}
 		
-		final SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        SharedPreferences myPrefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 		if (appVersion != myPrefs.getString(NOTES_VERSION_KEY, "NONE")) {
 			
-			// Inflate and setup the view.
-			LayoutInflater inflater = (LayoutInflater) mActivity.getLayoutInflater();
-			View notesView = inflater.inflate(R.layout.notes_view, null);
-			TextView notesAppTitle = (TextView) notesView.findViewById(R.id.notes_app_title);
-			notesAppTitle.setText(appName);
-			TextView notesAppVersion = (TextView) notesView.findViewById(R.id.notes_app_version);
-			notesAppVersion.setText(mActivity.getString(R.string.version_prefix) + " " + appVersion);
-			TextView notesText = (TextView) notesView.findViewById(R.id.notes_message);
-			notesText.setText(versionNotes);
-			
-			AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-    		builder.setView(notesView)
-    			.setPositiveButton(mActivity.getString(R.string.button_dimiss), new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						SharedPreferences.Editor editor = myPrefs.edit();
-						editor.putString(NOTES_VERSION_KEY, appVersion);
-						editor.commit();
-						dialog.dismiss();
-					}
-				})
-				.setOnCancelListener(new DialogInterface.OnCancelListener() {
-					
-					@Override
-					public void onCancel(DialogInterface dialog) {
-						SharedPreferences.Editor editor = myPrefs.edit();
-						editor.putString(NOTES_VERSION_KEY, appVersion);
-						editor.commit();
-						dialog.dismiss();
-					}
-				});
-    		
-    		AlertDialog dialog = builder.create();
-    		dialog.show();
+			// Display version notes dialog fragment
+            MagicVersionNotesDialogFragment dialogFragment = new MagicVersionNotesDialogFragment();
+            Bundle fragBundle = new Bundle();
+            fragBundle.putString(MagicVersionNotesDialogFragment.TITLE, appName);
+            fragBundle.putString(MagicVersionNotesDialogFragment.VERSION, appVersion);
+            fragBundle.putString(MagicVersionNotesDialogFragment.NOTES, versionNotes);
+            dialogFragment.setArguments(fragBundle);
+            dialogFragment.show(mActivity.getFragmentManager(), "MAGICVERSIONNOTES");
 		}
 	}
 	
@@ -178,7 +148,7 @@ public class MagicVersionNotes {
 		        result = null;
 		    }
 		} catch (NotFoundException e) {
-			Log.e(TAG, "Cannot find text file resourse to display!");
+			Log.e(TAG, "Cannot find text file resource to display!");
 			e.printStackTrace();
 		}
 		
