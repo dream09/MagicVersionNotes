@@ -1,30 +1,41 @@
 MagicVersionNotes
 =================
-An Android library project that provides a simple way of presenting version notes on first run and update of an application.  This project was developed in [Eclipse](http://www.eclipse.org/downloads/) using the [Android ADT plugin for Eclipse](http://developer.android.com/sdk/installing/installing-adt.html) using JDK 7.
+An Android library project that provides a simple way of presenting version notes on first run and update of an application.  This project was developed in [Android Studio](http://developer.android.com/tools/studio/).
 
+Adding MagicVersionNotes to your project
+----------------------------------------
+**1. Gradle dependency (Android Studio)**
 
-Cloning MagicVersionNotes source from GitHub
---------------------------------------------
-Follow these steps to clone the source if you would like to use this project and/or contribute.
+ - 	Add the following to your `build.gradle`:
+ ```gradle
+repositories {
+	    maven { url "https://jitpack.io" }
+}
 
-1. Switch to the *Git Repository Exploring* perspective in Eclipse.
-2. Copy the URI for this project https://github.com/dream09/MagicVersionNotes.git.
-3. Click *Clone a Git Repository* and paste the URI from step 2.
-4. The *Host* and *Repository* path fields should populate automatically. Click *Next >*.
-5. If you wish to use the latest stable version as a library for another project ensure the *master* branch is checked. If you wish to contribute to MagicVersionNotes ensure the *develop* branch is checked.
-6. Make any changes you wish in the **Local Destination** dialogue (remember - short paths close to root and without spaces are recommended), and click *Finish*.
-7. Wait for the repository to be cloned.
-8. If you would like to use the latest stable version check out the latest tag, for example v1.0, by:
-	- Right-click the repository and select *Switch To → Other...*
-	- Select Tags → v1.0 (or whatever is the latest)
-	- Click *Checkout*
-9. Right-click the repository and select *Import Projects...*.
-10. Select the *Import existing projects* option and click *Next >*.
-11. Ensure MagicVersionNotes is checked and click *Finish*.
-12. Switch to the *Java* perspective.
-13. Right-click the MagicVersionNotes project and click *Properties*.
-14. Under *Android* options ensure *Is Library* is checked and click *OK*.
+dependencies {
+	    compile 'com.github.dream09:MagicVersionNotes:2.0'
+}
+```
 
+**2. Maven**
+- Add the following to your `pom.xml`:
+ ```xml
+<repository>
+       	<id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+</repository>
+
+<dependency>
+	    <groupId>com.github.dream09</groupId>
+	    <artifactId>MagicVersionNotes</artifactId>
+	    <version>2.0</version>
+</dependency>
+```
+
+**3. Jar file only**
+ - Get the [**latest release .jar file**](https://github.com/dream09/MagicEula/releases) from the releases area
+ - Copy the **MagicVersionNotes-X.X.jar** file into the `libs` folder of your Android project
+ - Start using the library
 
 Using MagicVersionNotes
 -----------------------
@@ -45,7 +56,7 @@ protected void onCreate(Bundle savedInstanceState) {
     } catch (PackageManager.NameNotFoundException e) {
         e.printStackTrace();
     }
-    
+
     // Check if version notes should be displayed.
 	MagicVersionNotes myNotes = new MagicVersionNotes(this);
 	if (!myNotes.versionCheck(version)) {
@@ -56,7 +67,6 @@ protected void onCreate(Bundle savedInstanceState) {
 	}
 }
 ```
-
 
 Contributing to MagicVersionNotes
 ---------------------------------
